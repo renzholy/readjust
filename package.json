@@ -21,6 +21,7 @@
   "homepage": "https://github.com/renzholy/readjust#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "cld": "^2.9.0",
     "htmlparser2": "^9.0.0",
     "jszip": "^3.10.1",
     "p-map": "^6.0.0",

@@ -4,6 +4,7 @@ import pMap from 'p-map'
 import pReduce from 'p-reduce'
 import { load } from 'cheerio'
 import sharp from 'sharp'
+import cld from 'cld'
 
 import { feed, meta_inf_container, style_css } from './constants.js'
 import {
@@ -55,6 +56,7 @@ if (epub && feed) {
     ),
   )
   let cover: ArrayBuffer | null = null
+  const languages = new Set<string>()
   await pMap(items, async (item) => {
     const $ = load(item.content)
     $().each((i, el) => {
@@ -89,8 +91,11 @@ if (epub && feed) {
         )
       }
     })
-    const html = $.html()
+    const html = $.html({ xml: true })
     epub.file(item.filename, html)
+    ;(await cld.detect(html, { isHTML: true })).languages.forEach((language) =>
+      languages.add(language.code),
+    )
     await fs.writeFile(`output/${item.filename}`, html, 'utf-8')
   })
   if (cover) {
@@ -102,6 +107,7 @@ if (epub && feed) {
       title: feed.title,
       creator: feed.author,
       timestamp: feed.updated,
+      languages: Array.from(languages.values()),
       items,
     }),
   )

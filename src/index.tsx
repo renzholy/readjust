@@ -9,6 +9,7 @@ import {
   render_package,
   render_to_string,
 } from './xhtml.js'
+import { Item } from './types.js'
 
 const zip = new JSZip()
 
@@ -24,22 +25,22 @@ const epub = zip.folder('EPUB')
 
 if (epub && feed) {
   epub.file(
-    'package.opf',
-    render_package({
-      title: feed.title,
-      creator: feed.author,
-      language: 'en',
-      timestamp: feed.updated,
-      items: feed.items.length,
-    }),
-  )
-  epub.file(
     'style.css',
     await (
       await fetch('https://cdn.tailwindcss.com?plugins=typography')
     ).text(),
   )
   epub.file('cover.png', cover_image)
+
+  const items = feed.items
+    .filter((item) => !!item.description)
+    .map((item, index) => ({
+      id: index.toString(),
+      filename: `${index}.xhtml`,
+      title: item.title || 'Untitled',
+      content: render_html(sanitize(item.description!), item.title),
+    })) satisfies Item[]
+
   epub.file(
     'nav.xhtml',
     render_html(
@@ -47,9 +48,9 @@ if (epub && feed) {
         <nav {...epub_type('toc')} id="toc">
           <h1 className="title">Table of Contents</h1>
           <ol>
-            {feed.items.map((item, index) => (
-              <li key={index}>
-                <a href={`${index}.xhtml`}>{item.title}</a>
+            {items.map((item) => (
+              <li key={item.id}>
+                <a href={item.filename}>{item.title}</a>
               </li>
             ))}
           </ol>
@@ -57,14 +58,18 @@ if (epub && feed) {
       ),
     ),
   )
-  feed.items.forEach((item, index) => {
-    if (item.description) {
-      epub.file(
-        `${index}.xhtml`,
-        render_html(sanitize(item.description), item.title),
-      )
-    }
+  items.forEach((item) => {
+    epub.file(item.filename, item.content)
   })
+  epub.file(
+    'package.opf',
+    render_package({
+      title: feed.title,
+      creator: feed.author,
+      timestamp: feed.updated,
+      items,
+    }),
+  )
 }
 
 zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {

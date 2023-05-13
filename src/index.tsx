@@ -5,7 +5,6 @@ import pReduce from 'p-reduce'
 import sharp from 'sharp'
 import cld from 'cld'
 import { load } from 'cheerio'
-import { nanoid } from 'nanoid'
 
 import { feed, meta_inf_container } from './constants.js'
 import {
@@ -32,7 +31,7 @@ if (epub && feed) {
   const items = feed.items
     .filter((item) => !!item.description)
     .map((item, index) => ({
-      id: nanoid(),
+      id: index.toString(),
       filename: `${index}.xhtml`,
       title: item.title || 'Untitled',
       content: render_html(item.description!, item.title),

@@ -1,4 +1,4 @@
-import { epubType, renderToString } from './xhtml.js'
+import { epub_type, renderToString, render_package } from './xhtml.js'
 
 export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
 <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
@@ -7,26 +7,12 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
    </rootfiles>
 </container>`
 
-export const epub_package_opf = `<?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
-  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <dc:identifier id="uid">code.google.com.epub-samples.epub30-spec</dc:identifier>
-    <dc:title>EPUB 3.0 Specification</dc:title>
-    <dc:creator>EPUB 3 Working Group</dc:creator>
-    <dc:language>en</dc:language>
-    <meta property="dcterms:modified">2012-02-27T16:38:35Z</meta>
-  </metadata>
-  <manifest>
-    <item href="xhtml/epub30-nav.xhtml" id="nav" media-type="application/xhtml+xml" properties="nav"/>
-    <item href="xhtml/epub30-changes.xhtml" id="cha" media-type="application/xhtml+xml"/>
-    <item href="css/epub-spec.css" media-type="text/css" id="css"/>
-    <item href="img/epub_logo_color.jpg" media-type="image/jpeg" id="ci" properties="cover-image"/>
-  </manifest>
-  <spine>
-    <itemref idref="nav" linear="no"/>
-    <itemref idref="cha"/>
-  </spine>
-</package>`
+export const epub_package_opf = render_package({
+  title: 'EPUB 3.0 Specification',
+  creator: 'EPUB 3 Working Group',
+  language: 'en',
+  timestamp: new Date(),
+})
 
 export const epub_img_cover_image = await (
   await fetch(
@@ -42,7 +28,7 @@ export const example_toc = renderToString(
         <title>EPUB 3 Specifications - Table of Contents</title>
         <link rel="stylesheet" type="text/css" href="../css/epub-spec.css" />
       </head>
-      <nav {...epubType('toc')} id="toc">
+      <nav {...epub_type('toc')} id="toc">
         <h1 className="title">Table of Contents</h1>
         <ol>
           <li id="ttl">
@@ -1755,17 +1741,17 @@ export const example_toc = renderToString(
         </ol>
       </nav>
 
-      <nav {...epubType('landmarks')}>
+      <nav {...epub_type('landmarks')}>
         <h2>Guide</h2>
         <ol>
           <li>
-            <a {...epubType('toc')} href="#toc">
+            <a {...epub_type('toc')} href="#toc">
               Table of Contents
             </a>
           </li>
           <li>
             <a
-              {...epubType('bodymatter')}
+              {...epub_type('bodymatter')}
               href="epub30-overview.xhtml#sec-intro"
             >
               Overview
@@ -1773,7 +1759,7 @@ export const example_toc = renderToString(
           </li>
           <li>
             <a
-              {...epubType('bibliography')}
+              {...epub_type('bibliography')}
               href="epub30-references.xhtml#references"
             >
               References
@@ -1781,7 +1767,7 @@ export const example_toc = renderToString(
           </li>
           <li>
             <a
-              {...epubType('glossary')}
+              {...epub_type('glossary')}
               href="epub30-terminology.xhtml#terminology"
             >
               Terminology

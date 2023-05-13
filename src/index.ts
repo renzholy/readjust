@@ -8,7 +8,7 @@ import {
   example_changes,
   example_toc,
 } from './template.js'
-import { xml } from './xhtml.js'
+import { render_html } from './xhtml.js'
 
 const zip = new JSZip()
 
@@ -37,9 +37,9 @@ img?.file('epub_logo_color.jpg', epub_img_cover_image)
 
 const xhtml = epub?.folder('xhtml')
 
-xhtml?.file('epub30-nav.xhtml', xml(example_toc))
+xhtml?.file('epub30-nav.xhtml', render_html(example_toc))
 
-xhtml?.file('epub30-changes.xhtml', xml(example_changes))
+xhtml?.file('epub30-changes.xhtml', render_html(example_changes))
 
 zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {
   fs.writeFile('output.epub', content)

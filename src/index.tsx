@@ -87,7 +87,7 @@ if (epub && feed) {
         }
         if (
           !cover &&
-          parseInt(response.headers.get('content-length') || '0') >= 1024 * 1024
+          parseInt(response.headers.get('content-length') || '0') >= 20 * 1024
         ) {
           cover = obj[src].buffer
         }

@@ -8,7 +8,9 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
 </container>`
 
 export const style_css = await (
-  await fetch('https://cdn.tailwindcss.com?plugins=typography')
+  await fetch(
+    'https://raw.githubusercontent.com/cognitom/paper-css/master/paper.min.css',
+  )
 ).text()
 
 export const feed = parseFeed(

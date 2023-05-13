@@ -32,14 +32,15 @@ export const render_package = ({
 }) => `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="uid">app.readjust</dc:identifier>
     <dc:title>${title || 'Untitled'}</dc:title>
     <dc:creator>${creator || 'Unknown'}</dc:creator>
     ${languages
       .map((language) => `<dc:language>${language}</dc:language>`)
       .join('\n')}
-    <meta property="dcterms:modified">${(
-      timestamp || new Date()
-    ).toISOString()}</meta>
+    <meta property="dcterms:modified">${(timestamp || new Date())
+      .toISOString()
+      .replace(/\.\d{3}Z$/, 'Z')}</meta>
   </metadata>
   <manifest>
     <item href="style.css" id="css" media-type="text/css"/>

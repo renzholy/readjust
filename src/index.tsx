@@ -2,9 +2,10 @@ import JSZip from 'jszip'
 import fs from 'fs/promises'
 import pMap from 'p-map'
 import pReduce from 'p-reduce'
-import { load } from 'cheerio'
 import sharp from 'sharp'
 import cld from 'cld'
+import { load } from 'cheerio'
+import { nanoid } from 'nanoid'
 
 import { feed, meta_inf_container, style_css } from './constants.js'
 import {
@@ -31,7 +32,7 @@ if (epub && feed) {
   const items = feed.items
     .filter((item) => !!item.description)
     .map((item, index) => ({
-      id: index.toString(),
+      id: nanoid(),
       filename: `${index}.xhtml`,
       title: item.title || 'Untitled',
       content: render_html(item.description!, item.title),

@@ -1,5 +1,4 @@
 import JSZip from 'jszip'
-import pMap from 'p-map'
 import fs from 'fs/promises'
 import sanitize from 'sanitize-html'
 
@@ -58,7 +57,7 @@ if (epub && feed) {
       ),
     ),
   )
-  await pMap(feed.items, async (item, index) => {
+  feed.items.forEach((item, index) => {
     if (item.description) {
       epub.file(
         `${index}.xhtml`,

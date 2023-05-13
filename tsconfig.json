@@ -3,6 +3,7 @@
     "module": "ESNext",
     "target": "ES2017",
     "lib": ["ES2021", "DOM"],
+    "jsx": "react-jsx",
     "moduleResolution": "Node",
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,

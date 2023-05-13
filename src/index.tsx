@@ -56,7 +56,7 @@ if (epub && feed) {
   )
   let cover: ArrayBuffer | null = null
   const languages = new Set<string>()
-  await pMap(items, async (item) => {
+  await pMap(items, async (item, index) => {
     const text = await (await fetch(item.link)).text()
     const baseURI = new URL(item.link).origin
     const $ = load(load(text)('body').html() || text, { baseURI }, false)
@@ -78,21 +78,22 @@ if (epub && feed) {
       $('img')
         .toArray()
         .map((image) => image.attribs.src),
-      async (obj, src, index) => {
+      async (obj, src, i) => {
         const response = await fetch(
           src.startsWith('http') ? src : `${baseURI}/${src}`,
         )
         const contentType = response.headers.get('content-type')
+        const filename = `${index}-${i}.png`
         if (!contentType?.includes('svg')) {
           obj[src] = {
-            filename: `${index}.png`,
+            filename,
             buffer: await sharp(await response.arrayBuffer())
               .toFormat('png')
               .toBuffer(),
           }
         } else {
           obj[src] = {
-            filename: `${index}.svg`,
+            filename,
             buffer: Buffer.from(await response.arrayBuffer()),
           }
         }

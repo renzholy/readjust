@@ -4,3 +4,8 @@ export type Item = {
   title: string
   link: string
 }
+
+export type Image = {
+  filename: string
+  buffer: Buffer
+}

@@ -13,7 +13,7 @@ import {
   render_package,
   render_to_string,
 } from './xhtml.js'
-import { Item } from './types.js'
+import { Image, Item } from './types.js'
 
 const zip = new JSZip()
 
@@ -77,17 +77,22 @@ if (epub && feed) {
       $('img')
         .toArray()
         .map((image) => image.attribs.src),
-      async (obj, src) => {
+      async (obj, src, index) => {
         const response = await fetch(
           src.startsWith('http') ? src : `${baseURI}/${src}`,
         )
         const contentType = response.headers.get('content-type')
         if (!contentType?.includes('svg')) {
           obj[src] = {
-            type: 'image/png',
+            filename: `${index}.png`,
             buffer: await sharp(await response.arrayBuffer())
               .toFormat('png')
               .toBuffer(),
+          }
+        } else {
+          obj[src] = {
+            filename: `${index}.svg`,
+            buffer: Buffer.from(await response.arrayBuffer()),
           }
         }
         if (
@@ -98,23 +103,21 @@ if (epub && feed) {
         }
         return obj
       },
-      {} as { [key: string]: { type: string; buffer: Buffer } },
+      {} as { [key: string]: Image },
     )
     $('img').each((i, el) => {
-      if (images[el.attribs.src]) {
-        $(el).attr(
-          'src',
-          `data:${images[el.attribs.src].type};base64,${images[
-            el.attribs.src
-          ].buffer.toString('base64')}`,
-        )
+      const image = images[el.attribs.src]
+      if (image) {
+        $(el).attr('src', image.filename)
+        epub.file(image.filename, image.buffer)
+        fs.writeFile(`output/${image.filename}`, image.buffer)
       }
     })
     const html = render_html($.html({ xml: true }))
-    epub.file(item.filename, html)
     ;(await cld.detect(html, { isHTML: true })).languages.forEach((language) =>
       languages.add(language.code),
     )
+    epub.file(item.filename, html)
     await fs.writeFile(`output/${item.filename}`, html, 'utf-8')
   })
   if (cover) {

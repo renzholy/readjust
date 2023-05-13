@@ -4,3 +4,5 @@ dist/
 *.epub
 *.csv
 output/*.xhtml
+output/*.png
+output/*.svg

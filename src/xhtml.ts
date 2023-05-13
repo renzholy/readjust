@@ -11,7 +11,8 @@ export const epub_type = (type: string) => ({
 export const render_html = (body: string) =>
   `<?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
-${body}`
+<head><meta charset="utf-8" /></head>
+<body>${body}</body></html>`
 
 export const render_package = ({
   title,

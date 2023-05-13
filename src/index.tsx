@@ -41,23 +41,16 @@ if (epub && feed) {
     'nav.xhtml',
     render_html(
       render_to_string(
-        <html>
-          <head>
-            <meta charSet="utf-8" />
-          </head>
-          <body>
-            <nav {...epub_type('toc')}>
-              <h1>Table of Contents</h1>
-              <ol>
-                {items.map((item) => (
-                  <li key={item.id}>
-                    <a href={item.filename}>{item.title}</a>
-                  </li>
-                ))}
-              </ol>
-            </nav>
-          </body>
-        </html>,
+        <nav {...epub_type('toc')}>
+          <h1>Table of Contents</h1>
+          <ol>
+            {items.map((item) => (
+              <li key={item.id}>
+                <a href={item.filename}>{item.title}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>,
       ),
     ),
   )
@@ -66,7 +59,7 @@ if (epub && feed) {
   await pMap(items, async (item) => {
     const text = await (await fetch(item.link)).text()
     const baseURI = new URL(item.link).origin
-    const $ = load(load(text)('body').html() || text, { baseURI })
+    const $ = load(load(text)('body').html() || text, { baseURI }, false)
     $('script').remove()
     $('form').remove()
     $('input').remove()

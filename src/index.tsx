@@ -58,7 +58,7 @@ if (epub && feed) {
       ),
     ),
   )
-  pMap(items, async (item) => {
+  await pMap(items, async (item) => {
     epub.file(item.filename, item.content)
     await fs.writeFile(`output/${item.filename}`, item.content, 'utf-8')
   })

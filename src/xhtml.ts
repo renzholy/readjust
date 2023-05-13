@@ -15,7 +15,7 @@ export const render_html = (body: string, title?: string) =>
 <title>${title || 'Untitled'}</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
-<body class="prose">${body}</body></html>`
+<body class="prose"><h1>${title || 'Untitled'}</h1>${body}</body></html>`
 
 export const render_package = ({
   title,

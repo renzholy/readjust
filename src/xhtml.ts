@@ -37,8 +37,8 @@ export const render_package = ({
     ).toISOString()}</meta>
   </metadata>
   <manifest>
-    <item href="style.css" media-type="text/css" id="css"/>
-    <item href="cover.png" media-type="image/png" id="ci" properties="cover-image"/>
+    <item href="style.css" media-type="text/css"/>
+    <item href="cover.png" media-type="image/png" properties="cover-image"/>
     <item href="nav.xhtml" id="nav" media-type="application/xhtml+xml" properties="nav"/>
     ${items
       .map(

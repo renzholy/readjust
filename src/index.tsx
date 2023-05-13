@@ -45,7 +45,7 @@ if (epub && feed) {
     'nav.xhtml',
     render_html(
       render_to_string(
-        <nav {...epub_type('toc')} id="toc">
+        <nav {...epub_type('toc')}>
           <h1>Table of Contents</h1>
           <ol>
             {items.map((item) => (

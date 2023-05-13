@@ -59,11 +59,12 @@ if (epub && feed) {
   const languages = new Set<string>()
   await pMap(items, async (item) => {
     const $ = load(item.content)
-    $().each((i, el) => {
-      $(el).removeAttr('style')
+    $('*').each((i, el) => {
+      $(el).removeAttr('align')
       $(el).removeAttr('width')
       $(el).removeAttr('height')
       $(el).removeAttr('class')
+      $(el).removeAttr('style')
     })
     const images = await pReduce(
       $('img')
@@ -102,7 +103,7 @@ if (epub && feed) {
     await fs.writeFile(`output/${item.filename}`, html, 'utf-8')
   })
   if (cover) {
-    epub.file('cover.png')
+    epub.file('cover.png', await sharp(cover).toFormat('png').toBuffer())
   }
   epub.file(
     'package.opf',

@@ -29,36 +29,51 @@ const epub = zip.folder('EPUB')
 
 if (epub && feed) {
   const items = feed.items
-    .filter((item) => !!item.description)
+    .filter((item) => !!item.link)
     .map((item, index) => ({
       id: index.toString(),
       filename: `${index}.xhtml`,
       title: item.title || 'Untitled',
-      content: render_html(item.description!, item.title),
+      link: item.link!,
     })) satisfies Item[]
 
   epub.file(
     'nav.xhtml',
     render_html(
       render_to_string(
-        <nav {...epub_type('toc')}>
-          <h1>Table of Contents</h1>
-          <ol>
-            {items.map((item) => (
-              <li key={item.id}>
-                <a href={item.filename}>{item.title}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>,
+        <html>
+          <head>
+            <meta charSet="utf-8" />
+          </head>
+          <body>
+            <nav {...epub_type('toc')}>
+              <h1>Table of Contents</h1>
+              <ol>
+                {items.map((item) => (
+                  <li key={item.id}>
+                    <a href={item.filename}>{item.title}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </body>
+        </html>,
       ),
     ),
   )
   let cover: ArrayBuffer | null = null
   const languages = new Set<string>()
   await pMap(items, async (item) => {
-    const $ = load(item.content)
+    const text = await (await fetch(item.link)).text()
+    const baseURI = new URL(item.link).origin
+    const $ = load(load(text)('body').html() || text, { baseURI })
+    $('script').remove()
+    $('form').remove()
+    $('input').remove()
+    $('button').remove()
     $('*').each((i, el) => {
+      $(el).removeAttr('onclick')
+      $(el).removeAttr('onload')
       $(el).removeAttr('align')
       $(el).removeAttr('width')
       $(el).removeAttr('height')
@@ -71,13 +86,16 @@ if (epub && feed) {
         .map((image) => image.attribs.src),
       async (obj, src) => {
         const response = await fetch(
-          src.startsWith('http') ? src : `${feed?.link || ''}${src}`,
+          src.startsWith('http') ? src : `${baseURI}/${src}`,
         )
         obj[src] = {
           type: response.headers.get('content-type') || 'image',
           buffer: await response.arrayBuffer(),
         }
-        if (!cover) {
+        if (
+          !cover &&
+          parseInt(response.headers.get('content-length') || '0') >= 1024 * 1024
+        ) {
           cover = obj[src].buffer
         }
         return obj
@@ -94,7 +112,7 @@ if (epub && feed) {
         )
       }
     })
-    const html = $.html({ xml: true })
+    const html = render_html($.html({ xml: true }))
     epub.file(item.filename, html)
     ;(await cld.detect(html, { isHTML: true })).languages.forEach((language) =>
       languages.add(language.code),

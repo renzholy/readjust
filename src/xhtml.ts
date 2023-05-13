@@ -8,10 +8,10 @@ export const epub_type = (type: string) => ({
   'epub:type': type,
 })
 
-export const render_html = (body: string, title?: string) =>
-  `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
-<head><meta charset="utf-8" /><title>${title || 'Untitled'}</title></head>
-<body class="prose"><h1>${title || 'Untitled'}</h1>${body}</body></html>`
+export const render_html = (body: string) =>
+  `<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+${body}`
 
 export const render_package = ({
   title,

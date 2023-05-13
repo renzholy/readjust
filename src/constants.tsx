@@ -8,6 +8,6 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
 </container>`
 
 export const feed = parseFeed(
-  await (await fetch('https://arthurchiao.github.io/feed.xml')).text(),
+  await (await fetch('https://www.ruanyifeng.com/blog/atom.xml')).text(),
   { xmlMode: true },
 )

@@ -1,4 +1,4 @@
-import { epub_type, renderToString, render_package } from './xhtml.js'
+import { epub_type, render_to_string, render_package } from './xhtml.js'
 
 export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
 <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
@@ -20,7 +20,7 @@ export const epub_img_cover_image = await (
   )
 ).arrayBuffer()
 
-export const example_toc = renderToString(
+export const example_toc = render_to_string(
   <>
     <body>
       <head>
@@ -1779,7 +1779,7 @@ export const example_toc = renderToString(
   </>,
 )
 
-export const example_changes = renderToString(
+export const example_changes = render_to_string(
   <>
     <head>
       <meta charSet="utf-8" />

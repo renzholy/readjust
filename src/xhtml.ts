@@ -4,7 +4,7 @@ export const epub_type = (type: string) => ({
   'epub:type': type,
 })
 
-export { renderToString }
+export { renderToString as render_to_string }
 
 export const render_html = (children: string) =>
   `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">${children}</html>`

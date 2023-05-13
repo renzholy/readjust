@@ -7,12 +7,6 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
   </rootfiles>
 </container>`
 
-export const style_css = await (
-  await fetch(
-    'https://raw.githubusercontent.com/cognitom/paper-css/master/paper.min.css',
-  )
-).text()
-
 export const feed = parseFeed(
   await (await fetch('https://arthurchiao.github.io/feed.xml')).text(),
   { xmlMode: true },

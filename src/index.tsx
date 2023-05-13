@@ -7,7 +7,7 @@ import cld from 'cld'
 import { load } from 'cheerio'
 import { nanoid } from 'nanoid'
 
-import { feed, meta_inf_container, style_css } from './constants.js'
+import { feed, meta_inf_container } from './constants.js'
 import {
   epub_type,
   render_html,
@@ -38,7 +38,6 @@ if (epub && feed) {
       content: render_html(item.description!, item.title),
     })) satisfies Item[]
 
-  epub.file('style.css', style_css)
   epub.file(
     'nav.xhtml',
     render_html(

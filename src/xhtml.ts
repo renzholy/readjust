@@ -10,11 +10,7 @@ export const epub_type = (type: string) => ({
 
 export const render_html = (body: string, title?: string) =>
   `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
-<head>
-<meta charset="utf-8" />
-<title>${title || 'Untitled'}</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
+<head><meta charset="utf-8" /><title>${title || 'Untitled'}</title></head>
 <body class="prose"><h1>${title || 'Untitled'}</h1>${body}</body></html>`
 
 export const render_package = ({
@@ -43,7 +39,6 @@ export const render_package = ({
       .replace(/\.\d{3}Z$/, 'Z')}</meta>
   </metadata>
   <manifest>
-    <item href="style.css" id="css" media-type="text/css"/>
     <item href="cover.png" id="ci" media-type="image/png" properties="cover-image"/>
     <item href="nav.xhtml" id="nav" media-type="application/xhtml+xml" properties="nav"/>
     ${items

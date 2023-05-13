@@ -81,9 +81,14 @@ if (epub && feed) {
         const response = await fetch(
           src.startsWith('http') ? src : `${baseURI}/${src}`,
         )
-        obj[src] = {
-          type: response.headers.get('content-type') || 'image',
-          buffer: await response.arrayBuffer(),
+        const contentType = response.headers.get('content-type')
+        if (!contentType?.includes('svg')) {
+          obj[src] = {
+            type: 'image/png',
+            buffer: await sharp(await response.arrayBuffer())
+              .toFormat('png')
+              .toBuffer(),
+          }
         }
         if (
           !cover &&
@@ -93,15 +98,15 @@ if (epub && feed) {
         }
         return obj
       },
-      {} as { [key: string]: { type: string; buffer: ArrayBuffer } },
+      {} as { [key: string]: { type: string; buffer: Buffer } },
     )
     $('img').each((i, el) => {
       if (images[el.attribs.src]) {
         $(el).attr(
           'src',
-          `data:${images[el.attribs.src].type};base64,${Buffer.from(
-            images[el.attribs.src].buffer,
-          ).toString('base64')}`,
+          `data:${images[el.attribs.src].type};base64,${images[
+            el.attribs.src
+          ].buffer.toString('base64')}`,
         )
       }
     })
@@ -113,7 +118,13 @@ if (epub && feed) {
     await fs.writeFile(`output/${item.filename}`, html, 'utf-8')
   })
   if (cover) {
-    epub.file('cover.png', await sharp(cover).toFormat('png').toBuffer())
+    epub.file(
+      'cover.png',
+      await sharp(cover)
+        .resize({ width: 1860, height: 2480 })
+        .toFormat('png')
+        .toBuffer(),
+    )
   }
   epub.file(
     'package.opf',

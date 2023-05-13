@@ -56,7 +56,7 @@ if (epub && feed) {
   )
   let cover: ArrayBuffer | null = null
   await pMap(items, async (item) => {
-    const $ = load(item.content, { xml: true })
+    const $ = load(item.content)
     $().each((i, el) => {
       $(el).removeAttr('style')
       $(el).removeAttr('width')
@@ -89,7 +89,7 @@ if (epub && feed) {
         )
       }
     })
-    const html = $.html({ xml: true })
+    const html = $.html()
     epub.file(item.filename, html)
     await fs.writeFile(`output/${item.filename}`, html, 'utf-8')
   })

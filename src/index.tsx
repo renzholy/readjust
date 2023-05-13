@@ -61,6 +61,7 @@ if (epub && feed) {
     const baseURI = new URL(item.link).origin
     const $ = load(load(text)('body').html() || text, { baseURI }, false)
     $('script').remove()
+    $('style').remove()
     $('form').remove()
     $('input').remove()
     $('button').remove()

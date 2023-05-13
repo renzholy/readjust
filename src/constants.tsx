@@ -1,4 +1,3 @@
-import sharp from 'sharp'
 import { parseFeed } from 'htmlparser2'
 
 export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
@@ -11,14 +10,6 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
 export const style_css = await (
   await fetch('https://cdn.tailwindcss.com?plugins=typography')
 ).text()
-
-export const cover_image = await sharp(
-  await (
-    await fetch('https://cdn.beekka.com/blogimg/asset/202305/bg2023051012.jpg')
-  ).arrayBuffer(),
-)
-  .toFormat('png')
-  .toBuffer()
 
 export const feed = parseFeed(
   await (await fetch('https://arthurchiao.github.io/feed.xml')).text(),

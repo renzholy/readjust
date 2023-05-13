@@ -2,12 +2,9 @@ import JSZip from 'jszip'
 import pMap from 'p-map'
 import fs from 'fs/promises'
 import { parseFeed } from 'htmlparser2'
+import sanitize from 'sanitize-html'
 
-import {
-  epub_img_cover_image,
-  meta_inf_container,
-  example_toc,
-} from './template.js'
+import { cover_image, meta_inf_container, example_toc } from './template.js'
 import { render_html, render_package } from './xhtml.js'
 
 const feed = parseFeed(
@@ -48,11 +45,14 @@ if (epub) {
       await fetch('https://cdn.tailwindcss.com?plugins=typography')
     ).text(),
   )
-  epub.file('cover.jpg', epub_img_cover_image)
+  epub.file('cover.png', cover_image)
   epub.file('nav.xhtml', example_toc)
   await pMap(feed.items, async (item, index) => {
     if (item.description) {
-      epub.file(`${index}.xhtml`, render_html(item.description, item.title))
+      epub.file(
+        `${index}.xhtml`,
+        render_html(sanitize(item.description), item.title),
+      )
     }
   })
 }

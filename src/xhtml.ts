@@ -41,7 +41,7 @@ export const render_package = ({
   </metadata>
   <manifest>
     <item href="style.css" media-type="text/css" id="css"/>
-    <item href="cover.jpg" media-type="image/jpeg" id="ci" properties="cover-image"/>
+    <item href="cover.png" media-type="image/png" id="ci" properties="cover-image"/>
     <item href="nav.xhtml" id="nav" media-type="application/xhtml+xml" properties="nav"/>
     ${Array.from({ length: items })
       .map(

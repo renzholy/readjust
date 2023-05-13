@@ -1,3 +1,4 @@
+import sharp from 'sharp'
 import { epub_type, render_to_string, render_html } from './xhtml.js'
 
 export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
@@ -7,11 +8,13 @@ export const meta_inf_container = `<?xml version="1.0" encoding="UTF-8"?>
    </rootfiles>
 </container>`
 
-export const epub_img_cover_image = await (
-  await fetch(
-    'https://raw.githubusercontent.com/IDPF/epub3-samples/main/30/epub30-spec/EPUB/img/epub_logo_color.jpg',
-  )
-).arrayBuffer()
+export const cover_image = await sharp(
+  await (
+    await fetch('https://cdn.beekka.com/blogimg/asset/202305/bg2023051012.jpg')
+  ).arrayBuffer(),
+)
+  .toFormat('png')
+  .toBuffer()
 
 export const example_toc = render_html(
   render_to_string(

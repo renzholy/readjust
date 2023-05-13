@@ -1,6 +1,7 @@
 import JSZip from 'jszip'
 import fs from 'fs/promises'
 import sanitize from 'sanitize-html'
+import pMap from 'p-map'
 
 import {
   cover_image,
@@ -57,8 +58,9 @@ if (epub && feed) {
       ),
     ),
   )
-  items.forEach((item) => {
+  pMap(items, async (item) => {
     epub.file(item.filename, item.content)
+    await fs.writeFile(`output/${item.filename}`, item.content, 'utf-8')
   })
   epub.file(
     'package.opf',

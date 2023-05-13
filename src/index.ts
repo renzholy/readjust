@@ -1,13 +1,23 @@
 import JSZip from 'jszip'
+import pMap from 'p-map'
 import fs from 'fs/promises'
+import { parseFeed } from 'htmlparser2'
 
 import {
   epub_img_cover_image,
-  epub_package_opf,
   meta_inf_container,
-  example_changes,
   example_toc,
 } from './template.js'
+import { render_html, render_package } from './xhtml.js'
+
+const feed = parseFeed(
+  await (await fetch('https://arthurchiao.github.io/feed.xml')).text(),
+  { xmlMode: true },
+)
+
+if (!feed) {
+  process.exit(-1)
+}
 
 const zip = new JSZip()
 
@@ -22,7 +32,16 @@ if (meta) {
 const epub = zip.folder('EPUB')
 
 if (epub) {
-  epub.file('package.opf', epub_package_opf)
+  epub.file(
+    'package.opf',
+    render_package({
+      title: feed.title,
+      creator: feed.author,
+      language: 'en',
+      timestamp: feed.updated,
+      items: feed.items.length,
+    }),
+  )
   epub.file(
     'style.css',
     await (
@@ -30,8 +49,12 @@ if (epub) {
     ).text(),
   )
   epub.file('cover.jpg', epub_img_cover_image)
-  epub.file('epub30-nav.xhtml', example_toc)
-  epub.file('epub30-changes.xhtml', example_changes)
+  epub.file('nav.xhtml', example_toc)
+  await pMap(feed.items, async (item, index) => {
+    if (item.description) {
+      epub.file(`${index}.xhtml`, render_html(item.description, item.title))
+    }
+  })
 }
 
 zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {

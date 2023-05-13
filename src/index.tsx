@@ -45,7 +45,7 @@ if (epub && feed) {
     render_html(
       render_to_string(
         <nav {...epub_type('toc')} id="toc">
-          <h1 className="title">Table of Contents</h1>
+          <h1>Table of Contents</h1>
           <ol>
             {items.map((item) => (
               <li key={item.id}>
@@ -71,6 +71,7 @@ if (epub && feed) {
   )
 }
 
-zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {
-  fs.writeFile('output.epub', content)
-})
+await fs.writeFile(
+  'output.epub',
+  await zip.generateAsync({ type: 'nodebuffer' }),
+)

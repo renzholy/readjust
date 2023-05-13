@@ -22,12 +22,12 @@ export const epub_img_cover_image = await (
 
 export const example_toc = render_to_string(
   <>
-    <body>
-      <head>
-        <meta charSet="utf-8" />
-        <title>EPUB 3 Specifications - Table of Contents</title>
-        <link rel="stylesheet" type="text/css" href="../css/epub-spec.css" />
-      </head>
+    <head>
+      <meta charSet="utf-8" />
+      <title>EPUB 3 Specifications - Table of Contents</title>
+      <link rel="stylesheet" type="text/css" href="style.css" />
+    </head>
+    <body className="prose">
       <nav {...epub_type('toc')} id="toc">
         <h1 className="title">Table of Contents</h1>
         <ol>
@@ -1784,9 +1784,9 @@ export const example_changes = render_to_string(
     <head>
       <meta charSet="utf-8" />
       <title>EPUB 3 Changes from EPUB 2.0.1</title>
-      <link rel="stylesheet" type="text/css" href="../css/epub-spec.css" />
+      <link rel="stylesheet" type="text/css" href="style.css" />
     </head>
-    <body>
+    <body className="prose">
       <div style={{ float: 'right' }}>
         <img src="../img/idpflogo_web_125.jpg" alt="IDPF Logo" />
       </div>

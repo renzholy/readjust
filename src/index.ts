@@ -22,24 +22,16 @@ const epub = zip.folder('EPUB')
 
 epub?.file('package.opf', epub_package_opf)
 
-const css = epub?.folder('css')
-
-css?.file(
-  'epub-spec.css',
-  await (
-    await fetch('https://cdn.tailwindcss.com?plugins=typography')
-  ).arrayBuffer(),
+epub?.file(
+  'style.css',
+  await (await fetch('https://cdn.tailwindcss.com?plugins=typography')).text(),
 )
 
-const img = epub?.folder('img')
+epub?.file('cover.jpg', epub_img_cover_image)
 
-img?.file('epub_logo_color.jpg', epub_img_cover_image)
+epub?.file('epub30-nav.xhtml', render_html(example_toc))
 
-const xhtml = epub?.folder('xhtml')
-
-xhtml?.file('epub30-nav.xhtml', render_html(example_toc))
-
-xhtml?.file('epub30-changes.xhtml', render_html(example_changes))
+epub?.file('epub30-changes.xhtml', render_html(example_changes))
 
 zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {
   fs.writeFile('output.epub', content)

@@ -2,7 +2,12 @@ import JSZip from 'jszip'
 import fs from 'fs/promises'
 import sanitize from 'sanitize-html'
 
-import { cover_image, feed, meta_inf_container } from './constants.js'
+import {
+  cover_image,
+  feed,
+  meta_inf_container,
+  style_css,
+} from './constants.js'
 import {
   epub_type,
   render_html,
@@ -24,14 +29,6 @@ if (meta) {
 const epub = zip.folder('EPUB')
 
 if (epub && feed) {
-  epub.file(
-    'style.css',
-    await (
-      await fetch('https://cdn.tailwindcss.com?plugins=typography')
-    ).text(),
-  )
-  epub.file('cover.png', cover_image)
-
   const items = feed.items
     .filter((item) => !!item.description)
     .map((item, index) => ({
@@ -41,6 +38,8 @@ if (epub && feed) {
       content: render_html(sanitize(item.description!), item.title),
     })) satisfies Item[]
 
+  epub.file('style.css', style_css)
+  epub.file('cover.png', cover_image)
   epub.file(
     'nav.xhtml',
     render_html(

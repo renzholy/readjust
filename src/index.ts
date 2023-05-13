@@ -2,13 +2,13 @@ import JSZip from 'jszip'
 import fs from 'fs/promises'
 
 import {
-  epub_css_epub_spec_css,
   epub_img_cover_image,
   epub_package_opf,
   meta_inf_container,
   example_changes,
   example_toc,
 } from './template.js'
+import { xml } from './xhtml.js'
 
 const zip = new JSZip()
 
@@ -24,7 +24,12 @@ epub?.file('package.opf', epub_package_opf)
 
 const css = epub?.folder('css')
 
-css?.file('epub-spec.css', epub_css_epub_spec_css)
+css?.file(
+  'epub-spec.css',
+  await (
+    await fetch('https://cdn.tailwindcss.com?plugins=typography')
+  ).arrayBuffer(),
+)
 
 const img = epub?.folder('img')
 
@@ -32,15 +37,9 @@ img?.file('epub_logo_color.jpg', epub_img_cover_image)
 
 const xhtml = epub?.folder('xhtml')
 
-xhtml?.file(
-  'epub30-nav.xhtml',
-  `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">${example_toc}</html>`,
-)
+xhtml?.file('epub30-nav.xhtml', xml(example_toc))
 
-xhtml?.file(
-  'epub30-changes.xhtml',
-  `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">${example_changes}</html>`,
-)
+xhtml?.file('epub30-changes.xhtml', xml(example_changes))
 
 zip.generateAsync({ type: 'nodebuffer' }).then(function (content) {
   fs.writeFile('output.epub', content)

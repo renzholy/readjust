@@ -1,20 +1,15 @@
 import JSZip from 'jszip'
 import pMap from 'p-map'
 import fs from 'fs/promises'
-import { parseFeed } from 'htmlparser2'
 import sanitize from 'sanitize-html'
 
-import { cover_image, meta_inf_container, example_toc } from './template.js'
-import { render_html, render_package } from './xhtml.js'
-
-const feed = parseFeed(
-  await (await fetch('https://arthurchiao.github.io/feed.xml')).text(),
-  { xmlMode: true },
-)
-
-if (!feed) {
-  process.exit(-1)
-}
+import { cover_image, feed, meta_inf_container } from './constants.js'
+import {
+  epub_type,
+  render_html,
+  render_package,
+  render_to_string,
+} from './xhtml.js'
 
 const zip = new JSZip()
 
@@ -28,7 +23,7 @@ if (meta) {
 
 const epub = zip.folder('EPUB')
 
-if (epub) {
+if (epub && feed) {
   epub.file(
     'package.opf',
     render_package({
@@ -46,7 +41,23 @@ if (epub) {
     ).text(),
   )
   epub.file('cover.png', cover_image)
-  epub.file('nav.xhtml', example_toc)
+  epub.file(
+    'nav.xhtml',
+    render_html(
+      render_to_string(
+        <nav {...epub_type('toc')} id="toc">
+          <h1 className="title">Table of Contents</h1>
+          <ol>
+            {feed.items.map((item, index) => (
+              <li key={index}>
+                <a href={`${index}.xhtml`}>{item.title}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>,
+      ),
+    ),
+  )
   await pMap(feed.items, async (item, index) => {
     if (item.description) {
       epub.file(

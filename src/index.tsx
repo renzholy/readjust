@@ -1,7 +1,7 @@
 import JSZip from 'jszip'
 import fs from 'fs/promises'
-import sanitize from 'sanitize-html'
 import pMap from 'p-map'
+import { load } from 'cheerio'
 
 import {
   cover_image,
@@ -36,7 +36,7 @@ if (epub && feed) {
       id: index.toString(),
       filename: `${index}.xhtml`,
       title: item.title || 'Untitled',
-      content: render_html(sanitize(item.description!), item.title),
+      content: render_html(item.description!, item.title),
     })) satisfies Item[]
 
   epub.file('style.css', style_css)
@@ -59,6 +59,9 @@ if (epub && feed) {
     ),
   )
   await pMap(items, async (item) => {
+    const $ = load(item.content, { xml: true })
+    const images = $('img').toArray()
+    console.log(images)
     epub.file(item.filename, item.content)
     await fs.writeFile(`output/${item.filename}`, item.content, 'utf-8')
   })

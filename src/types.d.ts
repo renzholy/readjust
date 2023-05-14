@@ -6,6 +6,8 @@ export type Item = {
 }
 
 export type Image = {
+  id: string
   filename: string
+  type: string
   buffer: Buffer
 }

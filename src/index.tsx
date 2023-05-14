@@ -56,6 +56,7 @@ if (epub && feed) {
   )
   let cover: ArrayBuffer | null = null
   const languages = new Set<string>()
+  const images = new Set<Image>()
   await pMap(items, async (item, index) => {
     const text = await (await fetch(item.link)).text()
     const baseURI = new URL(item.link).origin
@@ -74,7 +75,7 @@ if (epub && feed) {
       $(el).removeAttr('class')
       $(el).removeAttr('style')
     })
-    const images = await pReduce(
+    const imgs = await pReduce(
       $('img')
         .toArray()
         .map((image) => image.attribs.src),
@@ -82,18 +83,23 @@ if (epub && feed) {
         const response = await fetch(
           src.startsWith('http') ? src : `${baseURI}/${src}`,
         )
-        const contentType = response.headers.get('content-type')
-        const filename = `${index}-${i}.png`
-        if (!contentType?.includes('svg')) {
+        const id = `${index}-${i}`
+        const filename = `${id}.png`
+        const type = response.headers.get('content-type')
+        if (!type?.includes('svg')) {
           obj[src] = {
+            id,
             filename,
+            type: 'image/png',
             buffer: await sharp(await response.arrayBuffer())
               .toFormat('png')
               .toBuffer(),
           }
         } else {
           obj[src] = {
+            id,
             filename,
+            type,
             buffer: Buffer.from(await response.arrayBuffer()),
           }
         }
@@ -108,11 +114,12 @@ if (epub && feed) {
       {} as { [key: string]: Image },
     )
     $('img').each((i, el) => {
-      const image = images[el.attribs.src]
-      if (image) {
-        $(el).attr('src', image.filename)
-        epub.file(image.filename, image.buffer)
-        fs.writeFile(`output/${image.filename}`, image.buffer)
+      const img = imgs[el.attribs.src]
+      if (img) {
+        images.add(img)
+        $(el).attr('src', img.filename)
+        epub.file(img.filename, img.buffer)
+        fs.writeFile(`output/${img.filename}`, img.buffer)
       }
     })
     const html = render_html($.html({ xml: true }))
@@ -139,6 +146,7 @@ if (epub && feed) {
       timestamp: feed.updated,
       languages: Array.from(languages.values()),
       items,
+      images: Array.from(images.values()),
     }),
   )
 }

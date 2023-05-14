@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server'
 
-import { Item } from './types.js'
+import { Image, Item } from './types.js'
 
 export { renderToString as render_to_string }
 
@@ -20,12 +20,14 @@ export const render_package = ({
   timestamp,
   languages,
   items,
+  images,
 }: {
   title?: string
   creator?: string
   timestamp?: Date
   languages: string[]
   items: Item[]
+  images: Image[]
 }) => `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -46,6 +48,12 @@ export const render_package = ({
       .map(
         (item) =>
           `<item href="${item.filename}" id="${item.id}" media-type="application/xhtml+xml"/>`,
+      )
+      .join('\n')}
+    ${images
+      .map(
+        (image) =>
+          `<item href="${image.filename}" id="${image.id}" media-type="${image.type}"/>`,
       )
       .join('\n')}
    </manifest>

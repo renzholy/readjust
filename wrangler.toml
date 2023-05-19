@@ -1,4 +1,4 @@
-compatibility_date = "2023-05-19"
+compatibility_date = "2023-05-12"
 main = "src/worker.ts"
 name = "readjust-worker"
 send_metrics = false

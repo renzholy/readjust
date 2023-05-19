@@ -12,27 +12,27 @@ export default {
     return new HTMLRewriter()
       .onDocument({
         doctype(doctype) {
-          console.log('doctype', doctype)
+          // console.log('doctype', { ...doctype })
         },
         comments(comment) {
-          console.log('comment', comment)
+          // console.log('comment', { ...comment })
         },
         text(text) {
-          console.log('text', text)
+          // console.log('text', { ...text })
         },
         end(end) {
-          console.log('end', end)
+          // console.log('end', { ...end })
         },
       })
       .on('*', {
         element(element) {
-          console.log('element', element)
+          console.log('element', { ...element })
         },
         comments(comment) {
-          console.log('comment', comment)
+          // console.log('comment', { ...comment })
         },
         text(text) {
-          console.log('text', text)
+          // console.log('text', { ...text })
         },
       })
       .transform(response)
